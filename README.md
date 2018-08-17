@@ -15,14 +15,14 @@ python3 -m virtualenv censorproj
 source censorproj/bin/activate
 
 #Install required libraries
-pip install networkx
-pip install matplotlib
+pip3 install networkx
+pip3 install matplotlib
 ```
 
 ## Running
 
 ```
-python3 src/censor.py
+python3 src/censor.py graph
 
 ```
 
