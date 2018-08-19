@@ -13,14 +13,10 @@ if len(sys.argv) < 2:
 # Constants
 filename = sys.argv[1]
 
-# create populations
-gp = initGeneralPopulation()
-ep = initExtremePopulation()
-# combine populations
-p = nx.compose(ep,gp)
+G = initializePopulation();
 
 
 #Process data
 
 #Print the result
-visualize(p, filename)
+visualize(G, filename)

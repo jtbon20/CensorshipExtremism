@@ -27,7 +27,15 @@ def visualize(G, filename):
     # plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
     # plt.close();
 
-    nx.draw(G)
+    # val_map = {0: 1.0,
+    #        1 0.5714285714285714,
+    #        2: 0.0}
+
+    values = [G.nodes[node]['type'] for node in G.nodes()]
+
+    nx.draw(G, cmap=plt.get_cmap('jet'), node_color=values)
+
+    # nx.draw(G)
     plt.show()
     plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
     plt.close();
