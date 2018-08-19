@@ -11,11 +11,11 @@ PASSIVE = 1
 EXTREMIST = 2
 
 # Global Population variables
-n = 30 # population
+n = 20 # population
 seed = 42 # for random processes
 initPE = .2 # percent of population that initallally has extreme views
 density = .2 # number of groups relative to size of population
-censorProbWeight = .3 # w
+censorProbWeight = .1 # w
 passiveProb = .3 # probability a general population node is disosed to be passive
 maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
 
