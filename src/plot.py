@@ -3,7 +3,7 @@ import os.path
 from numpy import array, ma
 import networkx as nx
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 def visualize(G, filename):
@@ -14,5 +14,5 @@ def visualize(G, filename):
     nx.draw(G, cmap=plt.get_cmap('jet'), node_color=values, edgelist=edges, edge_color=weights, edge_cmap=plt.get_cmap('RdGy'))
 
     plt.show()
-    plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
+    #plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
     plt.close();
