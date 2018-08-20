@@ -11,10 +11,10 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # values for the payoff matrix
-a = .3 # benefit from E > E (agreementCoef)
-b = .2 # gain from converting N>E (conversionCoef)
-c = 7 # cost of revealing views to non-believer  (badRevealCoef )
-d = .01 # delta (conversationCoef)
+a = .1 # benefit from E > E (agreementCoef)
+b = 1 # gain from converting N>E (conversionCoef)
+c = 5 # cost of revealing views to non-believer  (badRevealCoef )
+d = .1 # delta (conversationCoef)
 
 # payoff matrix of interactions
 Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
@@ -40,7 +40,7 @@ def getNormalizedFitness(G, node):
 
         # loop over, calculate and add into dict
         for u,v in G.edges(node):
-            neighborFitness[v] = calculateFitness(G, v)
+            neighborFitness[v] = calculateFitness(G, v) * G[u][v]['weight']
 
         # get total fitness
         totalFit = sum(neighborFitness.values())
@@ -50,7 +50,7 @@ def getNormalizedFitness(G, node):
     else:
         return {}
 # return a strategy based on probabilities
-def getStrategy(G, stratProbs):
+def getProbStrategy(G, stratProbs):
     # decision number and temp tracker
     decision = np.random.uniform(0,1, 1)
     total = 0
@@ -65,15 +65,32 @@ def getStrategy(G, stratProbs):
 
     return -1
 
-def updateFitness(G, node, strategy):
+# return deterministic strategy
+def getDetStrategy(G, stratProbs):
+    max = -1000
+    index = 0
+
+    print('************')
+    for node,probability in stratProbs.items():
+        print(node,probability)
+        if (probability > max):
+            max = probability
+            index = node
+
+    print('returning:', G.nodes[index]['type'])
+    return G.nodes[index]['type']
+
+def updateFitness(G, node, strategy, censorProbWeight):
     # loop over, calculate and add into dict
     for u,v in G.edges(node):
         G.nodes[v]['fitness'] = calculateFitness(G, v)
+        if (strategy == EXTREMIST):
+            G[u][v]['weight'] = censorProbWeight
 
     # then update itself
     G.nodes[node]['fitness'] = calculateFitness(G, node)
 
-def runSimulation(G, max):
+def runSimulation(G, max, censorProbWeight):
     # run simulation, for i time clicks, plotting at pos
     i = 0
     pos = nx.spring_layout(G)
@@ -90,12 +107,12 @@ def runSimulation(G, max):
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
-        newStrategy = getStrategy(G, neighborFitness)
+        newStrategy = getProbStrategy(G, neighborFitness)
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
             G.nodes[node]['type'] = newStrategy
-            updateFitness(G, node, newStrategy)
+            updateFitness(G, node, newStrategy, censorProbWeight)
 
         # plot results
         visualize(G, pos)

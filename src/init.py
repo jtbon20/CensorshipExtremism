@@ -13,10 +13,10 @@ EXTREMIST = 0
 # Global Population variables
 n = 50 # population
 seed = 42 # for random processes
-initPE = .01 # percent of population that initallally has extreme views
+initPE = .1 # percent of population that initallally has extreme views
 density = .2 # number of groups relative to size of population
 passiveProb = .2 # probability a general population node is disosed to be passive
-maxExtremistOutDegree = 3 # maximum number of out connections from extremists to general population
+maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
 
 
 def initGeneralPopulation():
