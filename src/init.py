@@ -19,6 +19,7 @@ censorProbWeight = .2 # w
 passiveProb = .4 # probability a general population node is disosed to be passive
 maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
 
+
 def initGeneralPopulation():
     # General Population variables
     gpEdgeProb = .3 # Probability for edge creation

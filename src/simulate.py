@@ -68,29 +68,31 @@ def getStrategy(G, stratProbs):
 def updateFitness(G, node, strategy):
     # loop over, calculate and add into dict
     for u,v in G.edges(node):
-        G.nodes[node]['fitness'] = calculateFitness(G, v)
+        G.nodes[v]['fitness'] = calculateFitness(G, v)
+
+    # then update itself
+    G.nodes[node]['fitness'] = calculateFitness(G, node)
 
 def runSimulation(G, max):
-    # run simulation, for i time clicks
+    # run simulation, for i time clicks, plotting at pos
     i = 0
+    pos = nx.spring_layout(G)
 
     while (i < max):
         #pick random node inside the graph
         node = np.random.randint(0,len(G)-1)
+        i += 1
 
         # get the normalized fitness to pick the probabilistic strategy
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
         newStrategy = getStrategy(G, neighborFitness)
-        G.nodes[node]['type'] = newStrategy
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
+            G.nodes[node]['type'] = newStrategy
             updateFitness(G, node, newStrategy)
 
-        #plot result
-        visualize(G, 'tmp')
-
-        #increment count
-        i += 1
+        # plot results
+        visualize(G, pos)
