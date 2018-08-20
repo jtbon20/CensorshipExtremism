@@ -1,9 +1,7 @@
 import sys
 import networkx as nx
-from plot import *
 from init import *
 from simulate import *
-from numpy import vstack, zeros
 import numpy as np
 
 #Arguments
@@ -20,8 +18,6 @@ simulationTime = 1000
 
 #initialize simulation
 G = initializePopulation(censorProbWeight)
-
-plt.ion()
 
 #run the simulation
 runSimulation(G, simulationTime)

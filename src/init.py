@@ -6,23 +6,22 @@ from numpy import vstack, zeros
 import numpy as np
 
 # Global Constants
-NEUTRAL = 0
+NEUTRAL = 2
 PASSIVE = 1
-EXTREMIST = 2
+EXTREMIST = 0
 
 # Global Population variables
-n = 20 # population
+n = 50 # population
 seed = 42 # for random processes
-initPE = .2 # percent of population that initallally has extreme views
+initPE = .01 # percent of population that initallally has extreme views
 density = .2 # number of groups relative to size of population
-censorProbWeight = .2 # w
-passiveProb = .4 # probability a general population node is disosed to be passive
-maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
+passiveProb = .2 # probability a general population node is disosed to be passive
+maxExtremistOutDegree = 3 # maximum number of out connections from extremists to general population
 
 
 def initGeneralPopulation():
     # General Population variables
-    gpEdgeProb = .3 # Probability for edge creation
+    gpEdgeProb = .5 # Probability for edge creation
     gpN = int (n * (1-initPE)) # general population inital number
     gpGroups = int (density * gpN) +1
     gpGroupSize = int (1 / density)
@@ -46,7 +45,7 @@ def initExtremePopulation():
     # Extremist Population variables
     epN = int(n *initPE) # extreme population inital number
     epEdgeProb = .7 # probabilty of rewiring edges
-    epGroups = int (density * epN) +1
+    epGroups = int (density * epN) + 1
     epGroupSize = int (1 / density)
     epEdgeWeight = 1
 
@@ -64,7 +63,7 @@ def initExtremePopulation():
     #return the new graph
     return ep
 
-def mergePopulations(generalGraph, extremistGraph):
+def mergePopulations(generalGraph, extremistGraph, censorProbWeight):
     # combine populations
     p = nx.disjoint_union(extremistGraph, generalGraph)
 
@@ -90,7 +89,7 @@ def initializePopulation(censorProbWeight):
     eGraph = initExtremePopulation()
 
     # merge the populations
-    p = mergePopulations(gGraph, eGraph)
+    p = mergePopulations(gGraph, eGraph, censorProbWeight)
 
     # initialize the fitness for the nodes in the population
     initializeFitness(p)

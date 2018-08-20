@@ -1,18 +1,19 @@
 import sys
 import networkx as nx
 from plot import *
+from analyze import *
 from numpy import vstack, zeros
 import numpy as np
 
 # Global Constants
-NEUTRAL = 0
+NEUTRAL = 2
 PASSIVE = 1
-EXTREMIST = 2
+EXTREMIST = 0
 
 # values for the payoff matrix
 a = .3 # benefit from E > E (agreementCoef)
-b = .5 # gain from converting N>E (conversionCoef)
-c = 1 # cost of revealing views to non-believer  (badRevealCoef )
+b = .2 # gain from converting N>E (conversionCoef)
+c = 7 # cost of revealing views to non-believer  (badRevealCoef )
 d = .01 # delta (conversationCoef)
 
 # payoff matrix of interactions
@@ -34,7 +35,6 @@ def calculateFitness(G, node):
 
 def getNormalizedFitness(G, node):
     if (G.has_node(node)):
-
         # empty dict
         neighborFitness = {}
 
@@ -78,7 +78,10 @@ def runSimulation(G, max):
     i = 0
     pos = nx.spring_layout(G)
 
+    plt.ion()
+
     while (i < max):
+        avgFitnessByPopulation(G)
         #pick random node inside the graph
         node = np.random.randint(0,len(G)-1)
         i += 1
