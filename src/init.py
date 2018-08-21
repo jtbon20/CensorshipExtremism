@@ -1,5 +1,4 @@
 import networkx as nx
-from plot import *
 from simulate import *
 import numpy as np
 
@@ -9,8 +8,8 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # Global Population variables
-g = 50 # groups in general population
-gs = 4 # group size in populations
+g = 25 # groups in general population
+gs = 8 # group size in populations
 seed = 42 # for random processes
 initPE = .05 # percent of population that initallally has extreme views
 passiveProb = .2 # probability a general population node is disosed to be passive

@@ -1,6 +1,8 @@
 import sys
 import networkx as nx
 from simulate import *
+import numpy as np
+from numpy import zeros
 
 #Arguments
 if len(sys.argv) < 2:
@@ -14,4 +16,7 @@ filename = sys.argv[1]
 simulationTime = 1000
 
 #run the simulation
-runSimulations(simulationTime)
+data = runSimulations(simulationTime)
+
+#plot the data
+heatMap(data, filename)

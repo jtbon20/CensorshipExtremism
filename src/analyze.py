@@ -38,4 +38,4 @@ def scoreFinalPopulation(G):
         elif (type == PASSIVE): pPop += 1
         else: ePop += 1
 
-    return (-1 * ePop + 0 * pPop + 1*pPop)
+    return (ePop + 0 * pPop + -1*nPop)

@@ -4,24 +4,19 @@ from analyze import *
 from init import *
 import numpy as np
 
+global c
+global w
 
 # values for the payoff matrix
 a = .1 # benefit from E > E (agreementCoef)
 b = 1 # gain from converting N>E (conversionCoef)
-c = 10 # cost of revealing views to non-believer  (badRevealCoef )
 d = .01 # delta (conversationCoef)
 
 # payoff matrix of interactions
 global Payoff
-Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
-
-
-#censorship
-w = 1 # w (probability message goes through)
 
 #probability of message getting through
 global Censorship
-Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
 
 
 # Global Constants
@@ -43,7 +38,7 @@ def getProbStrategy(G, stratProbs):
         if decision <= total:
             return(G.nodes[node]['type'])
 
-    return -1
+    return NEUTRAL
 
 def initializeFitness(population):
     for node,d in list(population.nodes(data=True)):
@@ -85,7 +80,9 @@ def getNormalizedFitness(G, node):
 
         # loop over, calculate and add into dict
         for u,v in G.edges(node):
-            neighborFitness[v] = calculateFitness(G, v) * G[u][v]['weight']
+            nodeType = G.nodes[u]['type']
+            neighborType = G.nodes[v]['type']
+            neighborFitness[v] = calculateFitness(G, v) * Censorship[nodeType][neighborType] #G[u][v]['weight']
 
         # get total fitness
         totalFit = max(sum(neighborFitness.values()),.1) #protect against 0
@@ -106,10 +103,11 @@ def updateFitness(G, node, strategy):
 def runSimulation(G, max):
     # run simulation, for i time clicks, plotting at pos
     i = 0
-    pos = nx.spring_layout(G)
 
     # initialize the fitness for the nodes in the population
     initializeFitness(G)
+
+    pos = nx.spring_layout(G)
 
     plt.ion()
 
@@ -120,7 +118,7 @@ def runSimulation(G, max):
         i += 1
 
         # if extremist, probability of removal
-        if (G.nodes[node]['type'] == EXTREMIST and (np.random.uniform(0,1, 1)) > w):
+        if (G.nodes[node]['type'] == EXTREMIST and (np.random.uniform(0,1, 1)) < w):
             G.nodes[node]['type'] = NEUTRAL
 
         # get the normalized fitness to pick the probabilistic strategy
@@ -135,24 +133,33 @@ def runSimulation(G, max):
             updateFitness(G, node, newStrategy)
 
         # plot results
-        visualize(G, pos)
+        # visualize(G, pos)
 
-        #return the final score of the population
-        return scoreFinalPopulation(G)
+    #return the final score of the population
+    return scoreFinalPopulation(G)
 
 def runSimulations(max):
+    global Payoff
+    global w
+    global Censorship
+
     censorshipRuns = 10
-    costRuns = 10
-    trials = 2
-    data = [[0 for x in range(censorshipRuns)] for y in range(costRuns)]
+    costRuns = 4
+    trials = 5
+    data = np.zeros((censorshipRuns,costRuns))
 
     # iterate over different dimensions
     for censorship in range(censorshipRuns):
         for cost in range(costRuns):
-
             #initialize parameters for the run
-            c = 10 * cost
+            c = 3 + cost
             w = .1 * censorship
+
+            print(c,w)
+
+            Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
+            Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
+
             results = []
 
             #iterate and save the data
@@ -162,4 +169,4 @@ def runSimulations(max):
             # save the result
             data[censorship][cost] = sum(results)/len(results)
 
-    print(data)
+    return data

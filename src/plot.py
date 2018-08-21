@@ -1,6 +1,6 @@
 from __future__ import division
 import os.path
-from numpy import array, ma
+from numpy import array, ma, zeros
 import networkx as nx
 import matplotlib
 matplotlib.use('TkAgg')
@@ -25,6 +25,10 @@ def visualize(G, pos):
     # nx.draw_networkx_labels(G, pos, labels = node_labels)
     plt.pause(.0001)
 
+def heatMap(data, filename):
+    plt.clf()
+    plt.imshow(data, cmap=plt.get_cmap('Reds'))
+    plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
 
 def save(G, filename):
     pos = nx.spring_layout(G)
