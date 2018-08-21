@@ -11,7 +11,7 @@ def visualize(G, pos):
 
     edges,weights = zip(*nx.get_edge_attributes(G,'weight').items())
 
-    # node_labels = nx.get_node_attributes(G,'type')
+    node_labels = nx.get_node_attributes(G,'type')
 
     node_sizes = []
     for n,d in G.nodes(data=True):
@@ -22,7 +22,7 @@ def visualize(G, pos):
 
     nx.draw(G, pos=pos, cmap=plt.get_cmap('Set1'), node_color=values, edgelist=edges, edge_color=weights, edge_size=1, edge_cmap=plt.get_cmap('RdGy'))
     # nx.draw(G, pos=pos, cmap=plt.get_cmap('jet'), node_color=values, edgelist=edges, edge_color=weights, edge_size=1, edge_cmap=plt.get_cmap('RdGy'))
-    # nx.draw_networkx_labels(G, pos, labels = node_labels)
+    nx.draw_networkx_labels(G, pos, labels = node_labels)
     plt.pause(.0001)
 
 def save(G, filename):

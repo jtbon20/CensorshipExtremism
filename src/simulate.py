@@ -14,11 +14,14 @@ b = 1 # gain from converting N>E (conversionCoef)
 c = 10 # cost of revealing views to non-believer  (badRevealCoef )
 d = .01 # delta (conversationCoef)
 
-w = .1 # w (probability message goes through)
-
 # payoff matrix of interactions
 Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
 
+
+#censorship
+w = .1 # w (probability message goes through)
+
+#probability of message getting through
 Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
 
 def calculateFitness(G, node):
@@ -30,8 +33,7 @@ def calculateFitness(G, node):
         # calculate the fitness it gets from each node
         nodeType = G.nodes[u]['type']
         neighborType = G.nodes[v]['type']
-        # print(nodeType, neighborType,Payoff[nodeType][neighborType] )
-        fitness += Payoff[nodeType][neighborType] #* G[u][v]['weight']
+        fitness += Payoff[nodeType][neighborType] * Censorship[nodeType][neighborType]#* G[u][v]['weight']
 
     # return the fitness
     return fitness
@@ -46,7 +48,7 @@ def getNormalizedFitness(G, node):
             neighborFitness[v] = calculateFitness(G, v) * G[u][v]['weight']
 
         # get total fitness
-        totalFit = sum(neighborFitness.values())
+        totalFit = max(sum(neighborFitness.values()),.1) #protect against 0
 
         # normalize and return
         return {k: v / totalFit for k, v in neighborFitness.items()}
@@ -80,7 +82,7 @@ def getDetStrategy(G, stratProbs):
 
     return G.nodes[index]['type']
 
-def updateFitness(G, node, strategy, censorProbWeight):
+def updateFitness(G, node, strategy):
     # loop over, calculate and add into dict
     for u,v in G.edges(node):
         G.nodes[v]['fitness'] = calculateFitness(G, v)

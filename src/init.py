@@ -68,7 +68,7 @@ def mergePopulations(generalGraph, extremistGraph):
             for i in range(np.random.randint(0,maxExtremistOutDegree)):
                 #pick random node, create connection from the general population
                 connection  = np.random.randint(len(extremistGraph),len(generalGraph) + len(extremistGraph))
-                p.add_edge(node,connection)
+                p.add_edge(node,connection,weight=1)
 
     return p
 
