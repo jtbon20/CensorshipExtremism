@@ -11,10 +11,10 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # values for the payoff matrix
-a = .1 # benefit from E > E (agreementCoef)
+a = .05 # benefit from E > E (agreementCoef)
 b = 1 # gain from converting N>E (conversionCoef)
-c = 5 # cost of revealing views to non-believer  (badRevealCoef )
-d = .1 # delta (conversationCoef)
+c = 10 # cost of revealing views to non-believer  (badRevealCoef )
+d = .01 # delta (conversationCoef)
 
 # payoff matrix of interactions
 Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
@@ -102,6 +102,10 @@ def runSimulation(G, max, censorProbWeight):
         #pick random node inside the graph
         node = np.random.randint(0,len(G)-1)
         i += 1
+
+        # if extremist, probability of removal
+        if (G.nodes[node]['type'] == EXTREMIST and (np.random.uniform(0,1, 1)) < censorProbWeight):
+            G.nodes[node]['type'] = NEUTRAL
 
         # get the normalized fitness to pick the probabilistic strategy
         neighborFitness = getNormalizedFitness(G, node)

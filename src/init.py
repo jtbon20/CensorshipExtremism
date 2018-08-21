@@ -15,8 +15,8 @@ n = 50 # population
 seed = 42 # for random processes
 initPE = .1 # percent of population that initallally has extreme views
 density = .2 # number of groups relative to size of population
-passiveProb = .2 # probability a general population node is disosed to be passive
-maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
+passiveProb = .4 # probability a general population node is disosed to be passive
+maxExtremistOutDegree = 3 # maximum number of out connections from extremists to general population
 
 
 def initGeneralPopulation():
@@ -83,7 +83,7 @@ def initializeFitness(population):
     for node,d in list(population.nodes(data=True)):
         d['fitness'] = calculateFitness(population, node)
 
-def initializePopulation(censorProbWeight):
+def initializePopulation(filename, censorProbWeight):
     # create population graphs and store nodes
     gGraph = initGeneralPopulation()
     eGraph = initExtremePopulation()
@@ -93,5 +93,7 @@ def initializePopulation(censorProbWeight):
 
     # initialize the fitness for the nodes in the population
     initializeFitness(p)
+
+    save(p, filename)
 
     return p

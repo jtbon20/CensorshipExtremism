@@ -13,12 +13,12 @@ if len(sys.argv) < 2:
 filename = sys.argv[1]
 
 # Simulation Constants
-censorProbWeight = .2 # w
-inComCensorWeight = .4 # q
+censorProbWeight = .1 # w
+inComCensorWeight = censorProbWeight # q
 simulationTime = 1000
 
 #initialize simulation
-G = initializePopulation(censorProbWeight)
+G = initializePopulation(filename, censorProbWeight)
 
 #run the simulation
 runSimulation(G, simulationTime, inComCensorWeight)
