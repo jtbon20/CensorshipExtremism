@@ -1,8 +1,6 @@
-import sys
 import networkx as nx
 from plot import *
 from analyze import *
-from numpy import vstack, zeros
 import numpy as np
 
 # Global Constants
@@ -11,13 +9,17 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # values for the payoff matrix
-a = .05 # benefit from E > E (agreementCoef)
+a = .1 # benefit from E > E (agreementCoef)
 b = 1 # gain from converting N>E (conversionCoef)
 c = 10 # cost of revealing views to non-believer  (badRevealCoef )
 d = .01 # delta (conversationCoef)
 
+w = .1 # w (probability message goes through)
+
 # payoff matrix of interactions
 Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
+
+Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
 
 def calculateFitness(G, node):
     #initialize fitness to 0
@@ -28,7 +30,8 @@ def calculateFitness(G, node):
         # calculate the fitness it gets from each node
         nodeType = G.nodes[u]['type']
         neighborType = G.nodes[v]['type']
-        fitness += Payoff[nodeType][neighborType] * G[u][v]['weight']
+        # print(nodeType, neighborType,Payoff[nodeType][neighborType] )
+        fitness += Payoff[nodeType][neighborType] #* G[u][v]['weight']
 
     # return the fitness
     return fitness
@@ -70,27 +73,22 @@ def getDetStrategy(G, stratProbs):
     max = -1000
     index = 0
 
-    print('************')
     for node,probability in stratProbs.items():
-        print(node,probability)
         if (probability > max):
             max = probability
             index = node
 
-    print('returning:', G.nodes[index]['type'])
     return G.nodes[index]['type']
 
 def updateFitness(G, node, strategy, censorProbWeight):
     # loop over, calculate and add into dict
     for u,v in G.edges(node):
         G.nodes[v]['fitness'] = calculateFitness(G, v)
-        if (strategy == EXTREMIST):
-            G[u][v]['weight'] = censorProbWeight
 
     # then update itself
     G.nodes[node]['fitness'] = calculateFitness(G, node)
 
-def runSimulation(G, max, censorProbWeight):
+def runSimulation(G, max):
     # run simulation, for i time clicks, plotting at pos
     i = 0
     pos = nx.spring_layout(G)
@@ -98,25 +96,25 @@ def runSimulation(G, max, censorProbWeight):
     plt.ion()
 
     while (i < max):
-        avgFitnessByPopulation(G)
+        # avgFitnessByPopulation(G)
         #pick random node inside the graph
         node = np.random.randint(0,len(G)-1)
         i += 1
 
         # if extremist, probability of removal
-        if (G.nodes[node]['type'] == EXTREMIST and (np.random.uniform(0,1, 1)) < censorProbWeight):
+        if (G.nodes[node]['type'] == EXTREMIST and (np.random.uniform(0,1, 1)) > w):
             G.nodes[node]['type'] = NEUTRAL
 
         # get the normalized fitness to pick the probabilistic strategy
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
-        newStrategy = getProbStrategy(G, neighborFitness)
+        newStrategy = getDetStrategy(G, neighborFitness)
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
             G.nodes[node]['type'] = newStrategy
-            updateFitness(G, node, newStrategy, censorProbWeight)
+            updateFitness(G, node, newStrategy)
 
         # plot results
         visualize(G, pos)

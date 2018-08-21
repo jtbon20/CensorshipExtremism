@@ -1,8 +1,6 @@
-import sys
 import networkx as nx
 from plot import *
 from simulate import *
-from numpy import vstack, zeros
 import numpy as np
 
 # Global Constants
@@ -58,7 +56,7 @@ def initExtremePopulation():
     #return the new graph
     return ep
 
-def mergePopulations(generalGraph, extremistGraph, censorProbWeight):
+def mergePopulations(generalGraph, extremistGraph):
     # combine populations
     p = nx.disjoint_union(extremistGraph, generalGraph)
 
@@ -70,7 +68,7 @@ def mergePopulations(generalGraph, extremistGraph, censorProbWeight):
             for i in range(np.random.randint(0,maxExtremistOutDegree)):
                 #pick random node, create connection from the general population
                 connection  = np.random.randint(len(extremistGraph),len(generalGraph) + len(extremistGraph))
-                p.add_edge(node,connection,weight=censorProbWeight)
+                p.add_edge(node,connection)
 
     return p
 
@@ -78,13 +76,13 @@ def initializeFitness(population):
     for node,d in list(population.nodes(data=True)):
         d['fitness'] = calculateFitness(population, node)
 
-def initializePopulation(filename, censorProbWeight):
+def initializePopulation(filename):
     # create population graphs and store nodes
     gGraph = initGeneralPopulation()
     eGraph = initExtremePopulation()
 
     # merge the populations
-    p = mergePopulations(gGraph, eGraph, censorProbWeight)
+    p = mergePopulations(gGraph, eGraph)
 
     # initialize the fitness for the nodes in the population
     initializeFitness(p)

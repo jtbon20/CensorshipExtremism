@@ -2,7 +2,6 @@ import sys
 import networkx as nx
 from init import *
 from simulate import *
-import numpy as np
 
 #Arguments
 if len(sys.argv) < 2:
@@ -13,12 +12,10 @@ if len(sys.argv) < 2:
 filename = sys.argv[1]
 
 # Simulation Constants
-censorProbWeight = .1 # w
-inComCensorWeight = censorProbWeight # q
 simulationTime = 1000
 
 #initialize simulation
-G = initializePopulation(filename, censorProbWeight)
+G = initializePopulation(filename)
 
 #run the simulation
-runSimulation(G, simulationTime, inComCensorWeight)
+runSimulation(G, simulationTime)
