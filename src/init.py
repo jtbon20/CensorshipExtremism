@@ -9,17 +9,17 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # Global Population variables
-g = 30 # groups in general population
+g = 50 # groups in general population
 gs = 4 # group size in populations
 seed = 42 # for random processes
 initPE = .05 # percent of population that initallally has extreme views
 passiveProb = .2 # probability a general population node is disosed to be passive
-maxExtremistOutDegree = 2 # maximum number of out connections from extremists to general population
+maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
 
 
 def initGeneralPopulation():
     # General Population variables
-    gpEdgeProb = .5 # Probability for edge creation
+    gpEdgeProb = .6 # Probability for edge creation
     gpEdgeWeight = 1
 
     # create graph
@@ -38,7 +38,7 @@ def initGeneralPopulation():
 
 def initExtremePopulation():
     # Extremist Population variables
-    epEdgeProb = 1 # Probability for edge creation
+    epEdgeProb = .9 # Probability for edge creation
     epEdgeWeight = 1
     epGroups = int(initPE * g) + 1
 
@@ -68,24 +68,16 @@ def mergePopulations(generalGraph, extremistGraph):
             for i in range(np.random.randint(0,maxExtremistOutDegree)):
                 #pick random node, create connection from the general population
                 connection  = np.random.randint(len(extremistGraph),len(generalGraph) + len(extremistGraph))
-                p.add_edge(node,connection,weight=1)
+                p.add_edge(node,connection,weight=.1)
 
     return p
 
-def initializeFitness(population):
-    for node,d in list(population.nodes(data=True)):
-        d['fitness'] = calculateFitness(population, node)
-
-def initializePopulation(filename):
+def initializePopulation():
     # create population graphs and store nodes
     gGraph = initGeneralPopulation()
     eGraph = initExtremePopulation()
 
     # merge the populations
     p = mergePopulations(gGraph, eGraph)
-
-    # initialize the fitness for the nodes in the population
-    initializeFitness(p)
-    save(p, filename)
 
     return p

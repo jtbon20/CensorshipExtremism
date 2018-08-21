@@ -1,12 +1,9 @@
 import networkx as nx
 from plot import *
 from analyze import *
+from init import *
 import numpy as np
 
-# Global Constants
-NEUTRAL = 2
-PASSIVE = 1
-EXTREMIST = 0
 
 # values for the payoff matrix
 a = .1 # benefit from E > E (agreementCoef)
@@ -15,16 +12,58 @@ c = 10 # cost of revealing views to non-believer  (badRevealCoef )
 d = .01 # delta (conversationCoef)
 
 # payoff matrix of interactions
+global Payoff
 Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
 
 
 #censorship
-w = .1 # w (probability message goes through)
+w = 1 # w (probability message goes through)
 
 #probability of message getting through
+global Censorship
 Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
 
+
+# Global Constants
+NEUTRAL = 2
+PASSIVE = 1
+EXTREMIST = 0
+
+# return a strategy based on probabilities
+def getProbStrategy(G, stratProbs):
+    # decision number and temp tracker
+    decision = np.random.uniform(0,1, 1)
+    total = 0
+
+    for node,probability in stratProbs.items():
+        # new total
+        total += probability
+
+        # if this is the selected solution
+        if decision <= total:
+            return(G.nodes[node]['type'])
+
+    return -1
+
+def initializeFitness(population):
+    for node,d in list(population.nodes(data=True)):
+        d['fitness'] = calculateFitness(population, node)
+
+# return deterministic strategy
+def getDetStrategy(G, stratProbs):
+    max = -1000
+    index = 0
+
+    for node,probability in stratProbs.items():
+        if (probability > max):
+            max = probability
+            index = node
+
+    return G.nodes[index]['type']
+
 def calculateFitness(G, node):
+    global Payoff
+    global Censorship
     #initialize fitness to 0
     fitness = 0
 
@@ -37,6 +76,7 @@ def calculateFitness(G, node):
 
     # return the fitness
     return fitness
+
 
 def getNormalizedFitness(G, node):
     if (G.has_node(node)):
@@ -54,33 +94,6 @@ def getNormalizedFitness(G, node):
         return {k: v / totalFit for k, v in neighborFitness.items()}
     else:
         return {}
-# return a strategy based on probabilities
-def getProbStrategy(G, stratProbs):
-    # decision number and temp tracker
-    decision = np.random.uniform(0,1, 1)
-    total = 0
-
-    for node,probability in stratProbs.items():
-        # new total
-        total += probability
-
-        # if this is the selected solution
-        if decision <= total:
-            return(G.nodes[node]['type'])
-
-    return -1
-
-# return deterministic strategy
-def getDetStrategy(G, stratProbs):
-    max = -1000
-    index = 0
-
-    for node,probability in stratProbs.items():
-        if (probability > max):
-            max = probability
-            index = node
-
-    return G.nodes[index]['type']
 
 def updateFitness(G, node, strategy):
     # loop over, calculate and add into dict
@@ -94,6 +107,9 @@ def runSimulation(G, max):
     # run simulation, for i time clicks, plotting at pos
     i = 0
     pos = nx.spring_layout(G)
+
+    # initialize the fitness for the nodes in the population
+    initializeFitness(G)
 
     plt.ion()
 
@@ -120,3 +136,30 @@ def runSimulation(G, max):
 
         # plot results
         visualize(G, pos)
+
+        #return the final score of the population
+        return scoreFinalPopulation(G)
+
+def runSimulations(max):
+    censorshipRuns = 10
+    costRuns = 10
+    trials = 2
+    data = [[0 for x in range(censorshipRuns)] for y in range(costRuns)]
+
+    # iterate over different dimensions
+    for censorship in range(censorshipRuns):
+        for cost in range(costRuns):
+
+            #initialize parameters for the run
+            c = 10 * cost
+            w = .1 * censorship
+            results = []
+
+            #iterate and save the data
+            for i in range(trials):
+                results.append(runSimulation(initializePopulation(), max))
+
+            # save the result
+            data[censorship][cost] = sum(results)/len(results)
+
+    print(data)
