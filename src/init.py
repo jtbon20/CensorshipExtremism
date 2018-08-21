@@ -11,24 +11,21 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # Global Population variables
-n = 50 # population
+g = 30 # groups in general population
+gs = 4 # group size in populations
 seed = 42 # for random processes
-initPE = .1 # percent of population that initallally has extreme views
-density = .2 # number of groups relative to size of population
-passiveProb = .4 # probability a general population node is disosed to be passive
-maxExtremistOutDegree = 3 # maximum number of out connections from extremists to general population
+initPE = .05 # percent of population that initallally has extreme views
+passiveProb = .2 # probability a general population node is disosed to be passive
+maxExtremistOutDegree = 2 # maximum number of out connections from extremists to general population
 
 
 def initGeneralPopulation():
     # General Population variables
     gpEdgeProb = .5 # Probability for edge creation
-    gpN = int (n * (1-initPE)) # general population inital number
-    gpGroups = int (density * gpN) +1
-    gpGroupSize = int (1 / density)
     gpEdgeWeight = 1
 
     # create graph
-    gp = nx.relaxed_caveman_graph(gpGroups, gpGroupSize, gpEdgeProb, seed=seed)
+    gp = nx.relaxed_caveman_graph(g, gs, gpEdgeProb, seed=seed)
 
     # label all depending on probability of passive or not
     for u,d in list(gp.nodes(data=True)):
@@ -43,14 +40,12 @@ def initGeneralPopulation():
 
 def initExtremePopulation():
     # Extremist Population variables
-    epN = int(n *initPE) # extreme population inital number
-    epEdgeProb = .7 # probabilty of rewiring edges
-    epGroups = int (density * epN) + 1
-    epGroupSize = int (1 / density)
+    epEdgeProb = 1 # Probability for edge creation
     epEdgeWeight = 1
+    epGroups = int(initPE * g) + 1
 
     #create the new graph
-    ep = nx.relaxed_caveman_graph(epGroups, epGroupSize, epEdgeProb, seed=seed)
+    ep = nx.relaxed_caveman_graph(epGroups, gs, epEdgeProb, seed=seed)
 
     # reweight the edges
     for (u, v) in ep.edges:
@@ -93,7 +88,6 @@ def initializePopulation(filename, censorProbWeight):
 
     # initialize the fitness for the nodes in the population
     initializeFitness(p)
-
     save(p, filename)
 
     return p
