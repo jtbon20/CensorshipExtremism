@@ -127,7 +127,7 @@ def runSimulation(G, max):
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
-        newStrategy = getProbStrategy(G, neighborFitness)
+        newStrategy = getDetStrategy(G, neighborFitness)
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
