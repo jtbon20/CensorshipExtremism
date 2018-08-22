@@ -8,10 +8,10 @@ PASSIVE = 1
 EXTREMIST = 0
 
 # Global Population variables
-g = 25 # groups in general population
-gs = 8 # group size in populations
+g = 20 # groups in general population
+gs = 4 # group size in populations
 seed = 42 # for random processes
-initPE = .05 # percent of population that initallally has extreme views
+initPE = .1 # percent of population that initallally has extreme views
 passiveProb = .2 # probability a general population node is disosed to be passive
 maxExtremistOutDegree = 4 # maximum number of out connections from extremists to general population
 
@@ -64,10 +64,10 @@ def mergePopulations(generalGraph, extremistGraph):
         # if extremist add connections to general population
         if (p.nodes[node]['type'] == EXTREMIST):
             # pick random number for extremist out degree
-            for i in range(np.random.randint(0,maxExtremistOutDegree)):
+            for i in range(np.random.randint(2,maxExtremistOutDegree+1)):
                 #pick random node, create connection from the general population
                 connection  = np.random.randint(len(extremistGraph),len(generalGraph) + len(extremistGraph))
-                p.add_edge(node,connection,weight=.1)
+                p.add_edge(node,connection,weight=.01)
 
     return p
 

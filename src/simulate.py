@@ -4,13 +4,15 @@ from analyze import *
 from init import *
 import numpy as np
 
-global c
+global d
 global w
+global d
 
 # values for the payoff matrix
 a = .1 # benefit from E > E (agreementCoef)
 b = 1 # gain from converting N>E (conversionCoef)
-d = .01 # delta (conversationCoef)
+# d = .01 # delta (conversationCoef)
+c = 2
 
 # payoff matrix of interactions
 global Payoff
@@ -125,7 +127,7 @@ def runSimulation(G, max):
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
-        newStrategy = getDetStrategy(G, neighborFitness)
+        newStrategy = getProbStrategy(G, neighborFitness)
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
@@ -143,21 +145,20 @@ def runSimulations(max):
     global w
     global Censorship
 
-    censorshipRuns = 10
-    costRuns = 4
-    trials = 5
-    data = np.zeros((censorshipRuns,costRuns))
+    censorshipRuns = 20
+    welfareRuns = 20
+    trials = 10
+    data = np.zeros((censorshipRuns,welfareRuns))
 
     # iterate over different dimensions
     for censorship in range(censorshipRuns):
-        for cost in range(costRuns):
+        for j in range(welfareRuns):
             #initialize parameters for the run
-            c = 3 + cost
-            w = .1 * censorship
+            d = j*0.005
+            w = .05 * censorship
+            print(w,d)
 
-            print(c,w)
-
-            Payoff = [[a ,b, -1 * c],[b, d, d],[-1 * d, d, d]]
+            Payoff = [[a ,b, -1 * c],[b, d, d],[d, d, d]]
             Censorship = [[1 ,w, w],[w, 1, 1],[w, 1, 1]]
 
             results = []
@@ -167,6 +168,6 @@ def runSimulations(max):
                 results.append(runSimulation(initializePopulation(), max))
 
             # save the result
-            data[censorship][cost] = sum(results)/len(results)
+            data[censorship][j] = sum(results)/len(results)
 
     return data

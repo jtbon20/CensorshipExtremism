@@ -19,4 +19,4 @@ simulationTime = 1000
 data = runSimulations(simulationTime)
 
 #plot the data
-heatMap(data, filename)
+heatMap(data,filename)

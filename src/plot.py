@@ -26,8 +26,19 @@ def visualize(G, pos):
     plt.pause(.0001)
 
 def heatMap(data, filename):
+    fig = plt.figure()
     plt.clf()
-    plt.imshow(data, cmap=plt.get_cmap('Reds'))
+
+    # add axes
+    xMin = 0
+    xMax = 1
+    yMin = 0
+    yMax = 1
+    extent = [xMin,xMax,yMin,yMax]
+    plt.imshow(data, cmap=plt.get_cmap('Reds'), extent = extent)
+    plt.title('Heatmap of Censorship v. Welfare (Probabilistic)')
+    plt.xlabel('Welfare')
+    plt.ylabel('Censorship')
     plt.savefig(os.path.basename(filename) + '.svg', bbox_inches='tight')
 
 def save(G, filename):
