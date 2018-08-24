@@ -127,7 +127,7 @@ def runSimulation(G, max):
         neighborFitness = getNormalizedFitness(G, node)
 
         # based on the probabilities, get a new strategy
-        newStrategy = getDetStrategy(G, neighborFitness)
+        newStrategy = getProbStrategy(G, neighborFitness)
 
         # if need to update strategy
         if (newStrategy != G.nodes[node]['type']):
@@ -135,7 +135,7 @@ def runSimulation(G, max):
             updateFitness(G, node, newStrategy)
 
         # plot results
-        # visualize(G, pos)
+        visualize(G, pos)
 
     #return the final score of the population
     return scoreFinalPopulation(G)
@@ -147,7 +147,7 @@ def runSimulations(max):
 
     censorshipRuns = 20
     welfareRuns = 20
-    trials = 10
+    trials = 100
     data = np.zeros((censorshipRuns,welfareRuns))
 
     # iterate over different dimensions
